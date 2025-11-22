@@ -4,6 +4,7 @@ import { Card, Input, Button, Typography, Checkbox } from '@material-tailwind/re
 import toast, { Toaster } from 'react-hot-toast';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
+import apiClient from '../../services/api-client';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -49,24 +50,12 @@ export default function Login() {
     setIsSubmitting(true);
     
     try {
-      const response = await fetch('http://localhost:5000/api/v1/user/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        }),
-        credentials: 'include'
-      });
+      const res = await apiClient.post('/user/login', {
+        email: formData.email,
+        password: formData.password
+      }, { withCredentials: true });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
+      const data = res.data;
 
       // Check if the user is internal
       if (data.data.role === 'internal') {
@@ -97,26 +86,14 @@ export default function Login() {
       const decoded = jwtDecode(credentialResponse.credential);
       
       // Try to login with Google data (will create account if doesn't exist)
-      const response = await fetch('http://localhost:5000/api/v1/user/google-signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: decoded.name,
-          email: decoded.email,
-          googleId: decoded.sub,
-          picture: decoded.picture
-        }),
-        credentials: 'include'
-      });
+      const res = await apiClient.post('/user/google-signup', {
+        name: decoded.name,
+        email: decoded.email,
+        googleId: decoded.sub,
+        picture: decoded.picture
+      }, { withCredentials: true });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Google login failed');
-      }
+      const data = res.data;
 
       localStorage.setItem('token', data.token);
       if (formData.rememberMe) {

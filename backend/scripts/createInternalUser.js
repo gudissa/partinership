@@ -1,8 +1,12 @@
 const axios = require('axios');
 
+// Allow overriding the API base URL via env when running scripts
+const { DEFAULT_API_URL } = require('../config/defaults');
+const API_BASE = process.env.API_BASE_URL || DEFAULT_API_URL;
+
 const createInternalUser = async () => {
   try {
-    const response = await axios.post('http://localhost:5000/api/v1/super-admin/users/internal', {
+    const response = await axios.post(`${API_BASE}/api/v1/super-admin/users/internal`, {
       email: 'internal@insa.com',
       name: 'Internal User',
       department: 'Internal Affairs'
@@ -15,4 +19,4 @@ const createInternalUser = async () => {
   }
 };
 
-createInternalUser(); 
+createInternalUser();

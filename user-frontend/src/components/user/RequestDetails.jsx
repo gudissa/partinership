@@ -56,7 +56,7 @@ const RequestDetails = () => {
           
           if (foundRequest) {
             setRequest(foundRequest);
-          } else {
+                    link.href = `${baseUrl}/api/v1/files/${fileName}`;
             throw new Error('Request not found');
           }
         } else {
@@ -387,7 +387,7 @@ const RequestDetails = () => {
                               const fileName = file.includes('/') || file.includes('\\') 
                                 ? file.split(/[/\\]/).pop() 
                                 : file;
-                              link.href = `http://localhost:5000/api/v1/files/${fileName}`;
+                              link.href = `${baseUrl}/api/v1/files/${fileName}`;
                               link.download = fileName;
                               document.body.appendChild(link);
                               link.click();

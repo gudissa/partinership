@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import apiClient from '../services/api-client';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 
@@ -25,16 +26,13 @@ function Login() {
     setLoading(true);
 
     try {
-      const base = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const baseSanitized = base.replace(/\/$/, '');
-      const endpoint = formData.isInternal 
-        ? `${baseSanitized}/api/v1/internal/login`
-        : `${baseSanitized}/api/v1/admin/login`;
-
-      const response = await axios.post(endpoint, {
+      const endpoint = formData.isInternal ? '/internal/login' : '/admin/login';
+      const res = await apiClient.post(endpoint, {
         email: formData.email,
         password: formData.password
-      });
+      }, { withCredentials: true });
+
+      const response = res; // normalize variable name below
 
       // Store token and user data
       localStorage.setItem('token', response.data.token);

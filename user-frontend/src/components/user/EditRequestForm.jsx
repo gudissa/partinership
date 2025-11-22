@@ -13,6 +13,7 @@ import {
 } from "@material-tailwind/react";
 import { CloudArrowUpIcon, DocumentIcon, XMarkIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+import apiClient from '../../services/api-client';
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -79,10 +80,10 @@ export default function EditRequestForm() {
 
         // Fetch user data and request data in parallel
         const [userResponse, requestResponse] = await Promise.all([
-          axios.get('http://localhost:5000/api/v1/user/me', {
+          apiClient.get('/user/me', {
             headers: { Authorization: `Bearer ${storedToken}` }
           }),
-          axios.get(`http://localhost:5000/api/v1/user/requests/${requestId}`, {
+          apiClient.get(`/user/requests/${requestId}`, {
             headers: { Authorization: `Bearer ${storedToken}` }
           })
         ]);
@@ -215,9 +216,8 @@ export default function EditRequestForm() {
         formData.append('removedAttachments', JSON.stringify(removedAttachments));
       }
 
-      const response = await axios.patch(`http://localhost:5000/api/v1/user/requests/${requestId}`, formData, {
+      const response = await apiClient.patch(`/user/requests/${requestId}`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`
         },
         withCredentials: true

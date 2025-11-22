@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Input, Button, Typography } from '@material-tailwind/react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import apiClient from '../../services/api-client';
 import {
   UserCircleIcon,
   BuildingOfficeIcon,
@@ -92,17 +93,13 @@ const Profile = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.patch(
-        'http://localhost:5000/api/v1/internal/profile',
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+      const res = await apiClient.patch('/internal/profile', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-      );
+      });
 
-      const updatedUser = response.data.data.user;
+      const updatedUser = res.data.data.user;
       setUser(updatedUser);
       setFormData({
         name: updatedUser.name || '',

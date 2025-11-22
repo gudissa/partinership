@@ -34,6 +34,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () =>
-  console.log(`🚀 Server running at http://localhost:${PORT}`)
+const HOST = process.env.HOST || '0.0.0.0';
+
+app.listen(PORT, HOST, () =>
+  console.log(`🚀 Server running on ${HOST}:${PORT} (process.env.HOST=${process.env.HOST || ''})`)
 );

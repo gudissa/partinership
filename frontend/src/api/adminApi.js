@@ -1,7 +1,8 @@
 import axios from "axios";
+import { baseUrl } from "../services/api-client";
 
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '') + '/api/v1/admin';
-const ROOT_API = API_URL.replace('/admin', '');
+const API_URL = `${baseUrl}/api/v1/admin`;
+const ROOT_API = `${baseUrl}/api/v1`;
 
 // Root API instance for non-admin endpoints (e.g., partnership-activities, partners)
 const rootApi = axios.create({

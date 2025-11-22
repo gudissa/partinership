@@ -4,6 +4,7 @@ import { Card, Input, Button, Typography, Checkbox } from '@material-tailwind/re
 import toast, { Toaster } from 'react-hot-toast';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
+import apiClient from '../../services/api-client';
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -65,25 +66,11 @@ export default function Signup() {
     setIsSubmitting(true);
     
     try {
-      const response = await fetch('http://localhost:5000/api/v1/user/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password
-        }),
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
-      }
+      const { data } = await apiClient.post('/user/signup', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      }, { withCredentials: true });
 
       toast.success('Registration successful! Redirecting to login...');
       setTimeout(() => navigate('/login'), 1500);
@@ -103,26 +90,14 @@ export default function Signup() {
       const decoded = jwtDecode(credentialResponse.credential);
       
       // Create account with Google data
-      const response = await fetch('http://localhost:5000/api/v1/user/google-signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: decoded.name,
-          email: decoded.email,
-          googleId: decoded.sub,
-          picture: decoded.picture
-        }),
-        credentials: 'include'
-      });
+      const res = await apiClient.post('/user/google-signup', {
+        name: decoded.name,
+        email: decoded.email,
+        googleId: decoded.sub,
+        picture: decoded.picture
+      }, { withCredentials: true });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Google signup failed');
-      }
+      const data = res.data;
 
       localStorage.setItem('token', data.token);
       toast.success('Google signup successful! Redirecting...');

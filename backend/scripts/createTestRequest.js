@@ -1,9 +1,13 @@
 import axios from 'axios';
 
+// Allow overriding API base used by scripts
+const { DEFAULT_API_URL } = require('../config/defaults');
+const API_BASE = process.env.API_BASE_URL || DEFAULT_API_URL;
+
 const createTestRequest = async () => {
   try {
     // First login to get the token
-    const loginResponse = await axios.post('http://localhost:5000/api/v1/internal/login', {
+    const loginResponse = await axios.post(`${API_BASE}/api/v1/internal/login`, {
       email: 'internal@insa.com',
       password: 'internal123'
     });
@@ -12,7 +16,7 @@ const createTestRequest = async () => {
 
     // Create a test request
     const requestResponse = await axios.post(
-      'http://localhost:5000/api/v1/internal/requests',
+      `${API_BASE}/api/v1/internal/requests`,
       {
         title: 'Test Request',
         description: 'This is a test request created for testing the dashboard',
@@ -33,4 +37,4 @@ const createTestRequest = async () => {
   }
 };
 
-createTestRequest(); 
+createTestRequest();

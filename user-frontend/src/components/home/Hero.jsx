@@ -46,14 +46,14 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="signup"
-                className="px-7 py-3.5 text-base font-medium text-white rounded-full bg-gradient-to-r from-[#3c8dbc] to-[#2c6a8f] hover:from-[#367fa9] hover:to-[#3c8dbc] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="btn-primary px-7 py-3.5 text-base font-semibold text-white rounded-full bg-gradient-to-r from-[#1f88d8] to-[#116ab8] hover:from-[#116ab8] hover:to-[#0f5595] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 Get Started
               </Link>
               <Link
                 to="about"
-                className="px-7 py-3.5 text-base font-medium text-[#3c8dbc] rounded-full bg-white hover:bg-gray-50 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="px-7 py-3.5 text-base font-semibold text-[#1f88d8] rounded-full bg-white hover:bg-gray-50 border-2 border-[#1f88d8] hover:border-[#116ab8] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 Learn More

@@ -22,23 +22,43 @@ export const loginInternalUser = async (req, res, next) => {
       return next(new AppError('Incorrect email or password', 401));
     }
 
-    // 3) Check if password is correct
+    // Check if user is internal first (before password check for better error messages)
+    if (user.role !== 'internal') {
+      console.log('User role is not internal:', user.role);
+      return next(new AppError('This account is not authorized to access the internal system. Please use the appropriate login page.', 403));
+    }
+
+    // 3) Check if password is correct - use the model's method for consistency
     console.log('Comparing passwords...');
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    let isPasswordCorrect = false;
+    
+    // Try using the model's method first
+    if (user.correctPassword) {
+      isPasswordCorrect = await user.correctPassword(password);
+    } else {
+      // Fallback to direct bcrypt comparison
+      isPasswordCorrect = await bcrypt.compare(password, user.password);
+    }
+    
     console.log('Password correct:', isPasswordCorrect);
     console.log('User role:', user.role);
-    console.log('User password hash:', user.password);
+    console.log('isPasswordTemporary:', user.isPasswordTemporary);
 
     if (!isPasswordCorrect) {
       return next(new AppError('Incorrect email or password', 401));
     }
 
-    // 4) Check if user is internal
-    if (user.role !== 'internal') {
-      return next(new AppError('This account is not authorized to access this system', 403));
+    // 4) Check if password is temporary (user needs to set up password)
+    // Note: For now, we allow login with temporary password for testing purposes
+    // In production, you may want to block this and require password setup first
+    if (user.isPasswordTemporary) {
+      console.warn('User logging in with temporary password:', user.email);
+      // Allow login but log a warning - user should set up password
+      // Uncomment the line below to block temporary password logins:
+      // return next(new AppError('Please set up your password first using the setup link provided when your account was created', 403));
     }
  
-    // 5) If everything ok, send token to client7
+    // 5) If everything ok, send token to client
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -47,6 +67,8 @@ export const loginInternalUser = async (req, res, next) => {
 
     // Remove password from output
     user.password = undefined;
+
+    console.log('Login successful for user:', user.email);
 
     res.status(200).json({
       status: 'success',

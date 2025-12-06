@@ -7,4 +7,4 @@ const DEFAULTS = {
   DEFAULT_DEV_FRONTEND: process.env.DEFAULT_DEV_FRONTEND || 'http://localhost:3000',
 };
 
-module.exports = DEFAULTS;
+export default DEFAULTS;

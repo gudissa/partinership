@@ -46,7 +46,7 @@ const HeroSection = () => {
             >
               <Link
                 to="/user/request"
-                className="px-8 py-4 bg-[#3c8dbc] text-white rounded-md hover:bg-[#367fa9] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-lg font-medium"
+                className="btn-primary px-8 py-4 bg-gradient-to-r from-[#1f88d8] to-[#116ab8] text-white rounded-lg hover:from-[#116ab8] hover:to-[#0f5595] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-lg font-semibold"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 Request Form

@@ -5,4 +5,13 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(),tailwindcss()],
+  server: {
+    port: 5174,
+    host: '0.0.0.0', // Allow access from network (Windows Server deployment)
+    strictPort: false
+  },
+  preview: {
+    port: 5174,
+    host: '0.0.0.0' // Allow access from network in preview mode
+  }
 })

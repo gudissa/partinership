@@ -5,15 +5,14 @@ import RouteConfig from "./route/RouteConfig";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import ConnectionStatus from './components/common/ConnectionStatus';
 
 function App() {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   
-  console.log('Google Client ID from env:', googleClientId);
-  
   // For development, you need to set up your own Google OAuth client ID
-  if (!googleClientId) {
-    console.warn('VITE_GOOGLE_CLIENT_ID not found in environment variables. Google OAuth will not work.');
+  if (!googleClientId && import.meta.env.DEV) {
+    console.warn('⚠️ VITE_GOOGLE_CLIENT_ID not found. Google OAuth will not work.');
   }
 
   return (
@@ -33,6 +32,7 @@ function App() {
             pauseOnHover
             theme="light"
           />
+          <ConnectionStatus />
         </AuthProvider>
       </BrowserRouter>
     </GoogleOAuthProvider>

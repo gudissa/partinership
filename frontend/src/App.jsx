@@ -4,6 +4,7 @@ import RouteConfig from "./router/RouteConfig";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import RequestDetails from "./components/view-request/RequestDetails";
+import ConnectionStatus from "./components/common/ConnectionStatus";
 
 function App() {
   return (
@@ -12,7 +13,19 @@ function App() {
         <Route path="/*" element={<RouteConfig />} />
         <Route path="/admin/request/:id" element={<RequestDetails />} />
       </Routes>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer 
+        position="top-right" 
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <ConnectionStatus />
     </BrowserRouter>
   );
 }

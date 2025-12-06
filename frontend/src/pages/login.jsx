@@ -62,24 +62,37 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#3c8dbc]/5 via-white to-[#3c8dbc]/5 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl">
+    <div className="min-h-screen bg-gradient-to-br from-[#3c8dbc]/5 via-white to-[#3c8dbc]/5 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#1f88d8]/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#116ab8]/10 rounded-full blur-3xl"></div>
+      </div>
+      
+      <div className="max-w-md w-full space-y-8 glass p-10 rounded-3xl shadow-2xl relative z-10 animate-fade-in">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-[#3c8dbc]">
+          <div className="mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#1f88d8] to-[#116ab8] mb-4 shadow-lg">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+          </div>
+          <h2 className="text-3xl font-bold gradient-text mb-2">
             {formData.isInternal ? 'Internal User Login' : 'Admin Login'}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             {formData.isInternal ? (
               <button
                 onClick={() => setFormData(prev => ({ ...prev, isInternal: false }))}
-                className="font-medium text-[#3c8dbc] hover:text-[#2c6a8f] transition-colors duration-200 underline decoration-2 underline-offset-4 hover:decoration-[#2c6a8f]"
+                className="font-medium text-[#3c8dbc] hover:text-[#2c6a8f] transition-all duration-200 underline decoration-2 underline-offset-4 hover:decoration-[#2c6a8f] hover:scale-105 inline-block"
               >
                 Switch to Admin Login
               </button>
             ) : (
               <button
                 onClick={() => setFormData(prev => ({ ...prev, isInternal: true }))}
-                className="font-medium text-[#3c8dbc] hover:text-[#2c6a8f] transition-colors duration-200 underline decoration-2 underline-offset-4 hover:decoration-[#2c6a8f]"
+                className="font-medium text-[#3c8dbc] hover:text-[#2c6a8f] transition-all duration-200 underline decoration-2 underline-offset-4 hover:decoration-[#2c6a8f] hover:scale-105 inline-block"
               >
                 Switch to Internal User Login
               </button>
@@ -97,7 +110,7 @@ function Login() {
                 name="email"
                 type="email"
                 required
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#3c8dbc] focus:border-[#3c8dbc] sm:text-sm transition-colors duration-200"
+                className="input-modern appearance-none block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3c8dbc]/20 focus:border-[#3c8dbc] sm:text-sm transition-all duration-300"
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
@@ -112,7 +125,7 @@ function Login() {
                 name="password"
                 type="password"
                 required
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#3c8dbc] focus:border-[#3c8dbc] sm:text-sm transition-colors duration-200"
+                className="input-modern appearance-none block w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3c8dbc]/20 focus:border-[#3c8dbc] sm:text-sm transition-all duration-300"
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
@@ -124,7 +137,7 @@ function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#3c8dbc] hover:bg-[#2c6a8f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3c8dbc] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary group relative w-full flex justify-center py-3 px-4 text-sm font-semibold rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3c8dbc] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center">

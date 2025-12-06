@@ -5,7 +5,7 @@ import AppError from '../utils/appError.js';
 import jwt from 'jsonwebtoken';
 import { hashPassword } from '../utils/helpers.js';
 import { makeSetupLink } from '../utils/linkHelpers.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // Get all users
 export const getAllUsers = async (req, res, next) => {
@@ -52,8 +52,6 @@ export const createInternalUser = async (req, res, next) => {
     // Generate temporary password
     const tempPassword = generateRandomPassword();
     console.log('Generated temporary password:', tempPassword);
-    const hashedPassword = await bcrypt.hash(tempPassword, 12);
-    console.log('Hashed password:', hashedPassword);
 
     // Generate setup token
     const setupToken = jwt.sign(
@@ -63,10 +61,12 @@ export const createInternalUser = async (req, res, next) => {
     );
 
     // Create new user with temporary password
-    const user = await User.create({
+    // Pass plain password - the User model's pre-save hook will hash it automatically
+    // This ensures the password is hashed with bcryptjs (matching the login comparison)
+    const user = new User({
       email,
       name,
-      password: hashedPassword,
+      password: tempPassword, // Plain password - will be hashed by pre-save hook
       role: 'internal',
       department: department || 'Internal',
       company: {
@@ -75,6 +75,11 @@ export const createInternalUser = async (req, res, next) => {
       },
       isPasswordTemporary: true
     });
+    
+    // Save the user (this will trigger the pre-save hook to hash the password)
+    await user.save();
+    
+    console.log('Created user with temporary password. User must set up password via setup link.');
 
     console.log('Created user:', user);
 
@@ -116,25 +121,19 @@ export const setupInternalUserPassword = async (req, res, next) => {
     const { email } = decoded;
     console.log('Decoded email:', email);
 
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(password, 12);
-    console.log('New password hash:', hashedPassword);
-
-    // Update user directly using findOneAndUpdate to bypass pre-save middleware
-    const updatedUser = await User.findOneAndUpdate(
-      { email, isPasswordTemporary: true },
-      { 
-        password: hashedPassword,
-        isPasswordTemporary: false
-      },
-      { new: true }
-    );
-
-    if (!updatedUser) {
+    // Find the user first
+    const user = await User.findOne({ email, isPasswordTemporary: true });
+    if (!user) {
       return next(new AppError('User not found or password already set', 404));
     }
 
-    console.log('Password updated successfully for user:', updatedUser.email);
+    // Update password directly on the user object (this will trigger pre-save hook)
+    // Pass plain password - pre-save hook will hash it with bcryptjs
+    user.password = password;
+    user.isPasswordTemporary = false;
+    await user.save(); // This will hash the password via pre-save hook
+    
+    console.log('Password updated successfully for user:', user.email);
 
     res.status(200).json({
       status: 'success',
@@ -188,7 +187,7 @@ export const createAdmin = async (req, res, next) => {
     }
 
     const tempPassword = generateRandomPassword();
-    const hashedPassword = await bcrypt.hash(tempPassword, 12);
+    console.log('Generated temporary password for admin:', tempPassword);
 
     const setupToken = jwt.sign(
       { email },
@@ -197,18 +196,35 @@ export const createAdmin = async (req, res, next) => {
     );
 
     // Create new admin with temporary password
-    const admin = await Admin.create({
+    // Pass plain password - the Admin model's pre-save hook will hash it automatically
+    // This ensures the password is hashed with bcryptjs (matching the login comparison)
+    const admin = new Admin({
       name,
       email,
-      password: hashedPassword,
+      password: tempPassword, // Plain password - will be hashed by pre-save hook
       role,
       isActive: true,
       isPasswordTemporary: true
     });
+    
+    // Save the admin (this will trigger the pre-save hook to hash the password)
+    await admin.save();
+    
+    console.log('Created admin with temporary password. Admin must set up password via setup link.');
 
-  // In a real application, you would send an email here
-  // For testing, we'll return the setup link (built from env)
-  const setupLink = makeSetupLink({ token: setupToken, forAdmin: true });
+    console.log('Admin created successfully:', { id: admin._id, email: admin.email, role: admin.role });
+
+    // In a real application, you would send an email here
+    // For testing, we'll return the setup link (built from env)
+    let setupLink;
+    try {
+      setupLink = makeSetupLink({ token: setupToken, forAdmin: true });
+      console.log('Setup link generated:', setupLink);
+    } catch (error) {
+      console.error('Error generating setup link:', error);
+      // Continue without setup link rather than failing the request
+      setupLink = null;
+    }
 
     res.status(201).json({
       status: 'success',
@@ -220,7 +236,7 @@ export const createAdmin = async (req, res, next) => {
           role: admin.role,
           isActive: admin.isActive
         },
-        setupLink
+        setupLink: setupLink || null
       }
     });
   } catch (error) {
@@ -286,25 +302,18 @@ export const setupAdminPassword = async (req, res, next) => {
     const { email } = decoded;
     console.log('Decoded email:', email);
 
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(password, 12);
-    console.log('New password hash:', hashedPassword);
-
-    // Update admin directly using findOneAndUpdate to bypass pre-save middleware
-    const updatedAdmin = await Admin.findOneAndUpdate(
-      { email, isPasswordTemporary: true },
-      { 
-        password: hashedPassword,
-        isPasswordTemporary: false
-      },
-      { new: true }
-    );
-
-    if (!updatedAdmin) {
+    // Find the admin first
+    const admin = await Admin.findOne({ email, isPasswordTemporary: true });
+    if (!admin) {
       return next(new AppError('Admin not found or password already set', 404));
     }
 
-    console.log('Password updated successfully for admin:', updatedAdmin.email);
+    // Update password directly on the admin object (this will trigger pre-save hook)
+    admin.password = password; // Plain password - pre-save hook will hash it
+    admin.isPasswordTemporary = false;
+    await admin.save(); // This will hash the password via pre-save hook
+    
+    console.log('Password updated successfully for admin:', admin.email);
 
     res.status(200).json({
       status: 'success',

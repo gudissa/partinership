@@ -116,16 +116,29 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-white via-[#3c8dbc]/5 to-white">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-white via-[#3c8dbc]/5 to-white relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#1f88d8]/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#116ab8]/10 rounded-full blur-3xl"></div>
+      </div>
+      
       <Toaster position="top-center" reverseOrder={false} />
       
-      <Card color="transparent" shadow={true} className="p-8 border border-[#3c8dbc]/20 rounded-3xl">
-        <Typography variant="h4" color="blue-gray" className="mb-2 text-center text-[#3c8dbc]">
-          Welcome Back
-        </Typography>
-        <Typography color="gray" className="mb-8 text-center">
-          Sign in to continue to your account
-        </Typography>
+      <Card color="transparent" shadow={true} className="glass p-8 border border-[#3c8dbc]/20 rounded-3xl relative z-10 animate-fade-in">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#1f88d8] to-[#116ab8] mb-4 shadow-lg">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <Typography variant="h4" className="mb-2 text-center gradient-text font-bold">
+            Welcome Back
+          </Typography>
+          <Typography color="gray" className="mb-8 text-center">
+            Sign in to continue to your account
+          </Typography>
+        </div>
 
         {/* Google OAuth Button */}
         <div className="mb-6">
@@ -204,13 +217,16 @@ export default function Login() {
           
           <Button 
             type="submit" 
-            className="mt-2 bg-[#3c8dbc] hover:bg-[#2c6a8f] text-white" 
+            className="btn-primary mt-2 bg-gradient-to-r from-[#1f88d8] to-[#116ab8] hover:from-[#116ab8] hover:to-[#0f5595] text-white shadow-lg" 
             fullWidth
             disabled={isSubmitting}
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center gap-2">
-                <span className="animate-spin">↻</span>
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
                 Logging In...
               </div>
             ) : 'Log In'}
